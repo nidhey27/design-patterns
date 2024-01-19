@@ -1,0 +1,28 @@
+@startuml
+interface BaseDecorator {
+  +send(message: string)
+}
+
+class Notifier {
+  -wrappee: BaseDecorator
+  +send(message: string)
+}
+
+class SMSDecorator {
+  +send(message: string)
+}
+
+class WhatsappDecorator {
+  +send(message: string)
+}
+
+class SlackDecorator {
+  +send(message: string)
+}
+
+BaseDecorator <|.. SMSDecorator
+BaseDecorator <|.. WhatsappDecorator
+BaseDecorator <|.. SlackDecorator
+
+Notifier *-- BaseDecorator
+@enduml
