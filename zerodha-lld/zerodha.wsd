@@ -1,0 +1,128 @@
+' @startuml
+
+' class User {
+'     + UserID: String
+'     ' + Funds: float
+'     ' + Portfolio
+'     ' + WatchList
+' }
+
+' class System {
+'     + Users: map[string]*Users
+'     + AddUser(userID string)
+'     + GetUser(userID string)
+' }
+
+' class Stock {
+' 	+ Name  string
+'     + Exch  EXCH
+' 	+ Price float64
+' }
+
+' class Order {
+'     + Type      TXN_TYPE
+' 	+ OrderType ORDER_TYPE
+' 	+ Quantity  int
+' 	+ Price     float64
+' 	+ Stock     *Stock
+' 	+ Exch      EXCH
+
+'     + GetTxnType() TXN_TYPE
+' }
+
+' class OrderManager {
+'     + OrderValidator 
+'     + OrderExecutor
+' }
+
+' class OrderValidator {
+'     + ValidateOrder(userID string, order *Order)
+' }
+
+' User .. System
+' Order <|.. OrderManager
+
+' @enduml
+
+@startuml
+
+class User {
+  +UserID: string
+}
+
+class System {
+  -Users: map[string]*User
+  +AddUser(id: string, user: *User)
+  +GetUser(id: string): *User
+}
+
+class Stock {
+  +Exch: EXCH
+  +Name: string
+  +Price: float64
+}
+
+enum EXCH {
+  NSE
+  BSE
+}
+
+class Order {
+  +Type: TXN_TYPE
+  +OrderType: ORDER_TYPE
+  +Quantity: int
+  +Price: float64
+  +Stock: *Stock
+  +Exch: EXCH
+  +GetTxnType(): TXN_TYPE
+}
+
+class OrderValidator {
+  -System: *System
+  +ValidateOrder(userID: string, order: *Order): bool
+}
+
+class OrderManager {
+  -OrderValidator: *OrderValidator
+  -OrderExecutor: *OrderExecutor
+  +PlaceOrder(userID: string, order: *Order)
+}
+
+class OrderExecutor {
+  +PlaceOrder(userID: string, order: *Order)
+}
+
+class ExchangeConnector {
+  +GetExchangeConnector(): *ExchangeConnector
+  +SendOrderToExchange(userID: string, order: *Order)
+}
+
+enum TXN_TYPE {
+  BUY
+  SELL
+}
+
+enum ORDER_TYPE {
+  MARKET
+  LIMIT
+}
+
+enum ORDER_STATUS {
+  OPEN
+  PARTIALLY_DONE
+  DONE
+  CANCELLED
+}
+
+User -- System
+System *-right- Order
+OrderValidator -- System
+OrderManager -- OrderValidator
+OrderManager -- OrderExecutor
+OrderExecutor -- ExchangeConnector
+Order *- Stock
+Order --|> TXN_TYPE
+Order --|> ORDER_TYPE
+Stock --|> EXCH
+
+@enduml
